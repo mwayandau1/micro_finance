@@ -1,0 +1,89 @@
+1. Customer Requirements
+To create a microfinance application that meets customer needs, consider the following features:
+
+User Registration and Authentication: Users can create accounts and log in securely.
+Loan Application: Users can apply for loans by providing necessary details.
+Loan Approval Process: Admins can review and approve or reject loan applications.
+Loan Repayment Tracking: Users can view their loan repayment schedules and make payments.
+Transaction History: Users can see their transaction history.
+Notifications: Users receive notifications about loan status, repayment reminders, etc.
+User Profile Management: Users can update their profile information.
+Admin Dashboard: Admins can manage users, loans, and transactions.
+2. System Requirements
+To support the features outlined above, the system should have the following requirements:
+
+Authentication: Secure user authentication and authorization mechanisms.
+Database: Reliable and scalable database to store user and loan data.
+Frontend: User-friendly interface for customers and admin users.
+Backend API: Robust API to handle business logic and database interactions.
+Payment Gateway Integration: Secure integration for handling loan repayments.
+Notifications Service: System to send email/SMS notifications.
+3. Entities Involved
+The main entities involved in the microfinance application are:
+
+User: Represents customers and admin users.
+Loan: Represents loan applications and their status.
+Payment: Represents loan repayments made by users.
+Transaction: Represents all financial transactions.
+Notification: Represents messages sent to users regarding their loans.
+4. Database Schema
+The database schema will include tables for users, loans, payments, transactions, and notifications. Below is a basic schema definition.
+
+Users Table
+sql
+Copy code
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'customer', -- 'customer' or 'admin'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Loans Table
+sql
+Copy code
+CREATE TABLE loans (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    amount DECIMAL(10, 2) NOT NULL,
+    interest_rate DECIMAL(5, 2) NOT NULL,
+    term INT NOT NULL, -- in months
+    status VARCHAR(20) NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Payments Table
+sql
+Copy code
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    loan_id INT REFERENCES loans(id),
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Transactions Table
+sql
+Copy code
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    type VARCHAR(50) NOT NULL, -- 'loan disbursement', 'loan repayment'
+    amount DECIMAL(10, 2) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Notifications Table
+sql
+Copy code
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    message TEXT NOT NULL,
+    read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
