@@ -89,8 +89,6 @@ const User = sequelize.define(
           throw new CustomError("Password length must be greater than 7", 400);
         }
         if (value === this.password) {
-          const hashPassword = bcrypt.hashSync(value, 10);
-          this.setDataValue("password", hashPassword);
         } else {
           throw new CustomError(
             "Password and confirm password must be the same",
@@ -120,5 +118,10 @@ const User = sequelize.define(
 
 User.hasMany(Loan, { foreignKey: "userId" });
 Loan.belongsTo(User, { foreignKey: "userId" });
+
+User.beforeCreate(async (user, options) => {
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  user.password = hashedPassword;
+});
 
 module.exports = User;
