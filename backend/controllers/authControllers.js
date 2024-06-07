@@ -22,8 +22,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
   const tokenUser = {
     id: user.id,
     email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    role: user.role,
   };
   const token = generateJWT({ payload: tokenUser });
   return res.status(201).json({ tokenUser, token });
@@ -41,8 +40,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
   const tokenUser = {
     id: user.id,
     email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    role: user.role,
   };
   const token = generateJWT({ payload: tokenUser });
 

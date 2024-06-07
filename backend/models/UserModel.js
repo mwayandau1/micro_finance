@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/dbConnection");
 const CustomError = require("../utils/customError");
-
+const Loan = require("./LoanModel");
 const bcrypt = require("bcrypt");
 
 const User = sequelize.define(
-  "user",
+  "User",
   {
     id: {
       allowNull: false,
@@ -30,10 +30,10 @@ const User = sequelize.define(
       allowNull: false,
       validate: {
         notNull: {
-          msg: "Last name can not be null",
+          msg: "Last name cannot be null",
         },
         notEmpty: {
-          msg: "Last name can not be empty",
+          msg: "Last name cannot be empty",
         },
       },
     },
@@ -46,14 +46,13 @@ const User = sequelize.define(
           msg: "Please provide a valid email format",
         },
         notNull: {
-          msg: "Email can not be null",
+          msg: "Email cannot be null",
         },
         notEmpty: {
-          msg: "Email can not be empty",
+          msg: "Email cannot be empty",
         },
       },
     },
-
     phone: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -71,16 +70,15 @@ const User = sequelize.define(
         },
       },
     },
-
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: "password cannot be null",
+          msg: "Password cannot be null",
         },
         notEmpty: {
-          msg: "password cannot be empty",
+          msg: "Password cannot be empty",
         },
       },
     },
@@ -88,7 +86,7 @@ const User = sequelize.define(
       type: DataTypes.VIRTUAL,
       set(value) {
         if (this.password.length < 7) {
-          throw new CustomError("Password length must be grater than 7", 400);
+          throw new CustomError("Password length must be greater than 7", 400);
         }
         if (value === this.password) {
           const hashPassword = bcrypt.hashSync(value, 10);
@@ -119,5 +117,8 @@ const User = sequelize.define(
     modelName: "user",
   }
 );
+
+User.hasMany(Loan, { foreignKey: "userId" });
+Loan.belongsTo(User, { foreignKey: "userId" });
 
 module.exports = User;

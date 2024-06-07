@@ -1,7 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/dbConnection");
+
 const Loan = sequelize.define(
-  "loan",
+  "Loan",
   {
     id: {
       allowNull: false,
@@ -11,17 +12,17 @@ const Loan = sequelize.define(
     },
     userId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "User",
         key: "id",
       },
       validate: {
         notNull: {
-          msg: "User id can not be null",
+          msg: "User id cannot be null",
         },
-
         notEmpty: {
-          msg: "User id can not be empty",
+          msg: "User id cannot be empty",
         },
       },
     },
@@ -30,10 +31,10 @@ const Loan = sequelize.define(
       allowNull: false,
       validate: {
         notNull: {
-          msg: "Amount can not be null",
+          msg: "Amount cannot be null",
         },
         notEmpty: {
-          msg: "Amount can not empty",
+          msg: "Amount cannot be empty",
         },
       },
     },
@@ -50,6 +51,9 @@ const Loan = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: 6,
     },
+    purpose: {
+      type: DataTypes.STRING,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -65,6 +69,8 @@ const Loan = sequelize.define(
   {
     paranoid: true,
     freezeTableName: true,
-    modelName: "user",
+    modelName: "loan",
   }
 );
+
+module.exports = Loan;

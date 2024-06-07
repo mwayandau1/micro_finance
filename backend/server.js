@@ -3,19 +3,21 @@ const sequelize = require("./db/dbConnection");
 
 const PORT = 5000 || process.env.PORT;
 
-sequelize
-  .sync()
-  .then(() => {
-    console.log("Database & tables created!");
-  })
-  .catch((err) => {
-    console.error("Unable to sync database:", err);
-  });
+// sequelize
+//   .sync()
+//   .then(() => {
+//     console.log("Database & tables created!");
+//   })
+//   .catch((err) => {
+//     console.error("Unable to sync database:", err);
+//   });
 
 const start = async () => {
   try {
     sequelize.authenticate();
     console.log("Connected to the database");
+    await sequelize.sync({ alter: true }); // or { alter: true } to update existing tables
+
     app.listen(PORT, () =>
       console.log(`Server up and running on port ${PORT}`)
     );
