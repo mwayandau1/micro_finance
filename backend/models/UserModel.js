@@ -73,6 +73,7 @@ const User = sequelize.define(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+
       validate: {
         notNull: {
           msg: "Password cannot be null",
@@ -113,6 +114,14 @@ const User = sequelize.define(
     paranoid: true,
     freezeTableName: true,
     modelName: "user",
+    defaultScope: {
+      attributes: { exclude: ["password"] },
+    },
+    scopes: {
+      withPassword: {
+        attributes: {},
+      },
+    },
   }
 );
 

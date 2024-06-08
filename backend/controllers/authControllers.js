@@ -33,10 +33,14 @@ const loginUser = asyncHandler(async (req, res, next) => {
   if (!email || !password) {
     return next(new CustomError("Please provide all values", 400));
   }
-  const user = await User.findOne({ where: { email } });
-  if (!user || !bcrypt.compare(password, user.password)) {
+
+  // Find the user including the password
+  const user = await User.scope("withPassword").findOne({ where: { email } });
+
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return next(new CustomError("Incorrect email or password", 401));
   }
+
   const tokenUser = {
     id: user.id,
     email: user.email,

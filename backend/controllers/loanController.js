@@ -56,7 +56,9 @@ const rejectLoan = asyncHandler(async (req, res, next) => {
 
 const getSingleLoanById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const loan = await Loan.findByPk(id, { include: User });
+  const loan = await Loan.findByPk(id, {
+    include: User.email,
+  });
   if (!loan) {
     return next(new CustomError("No loan found with this id", 404));
   }
