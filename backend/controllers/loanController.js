@@ -1,6 +1,7 @@
 const Loan = require("../models/LoanModel");
 const CustomError = require("../utils/customError");
 const asyncHandler = require("../utils/asyncHandler");
+const User = require("../models/UserModel");
 
 const createLoan = asyncHandler(async (req, res, next) => {
   const { amount, interest_rate, term, purpose } = req.body;
@@ -21,7 +22,7 @@ const createLoan = asyncHandler(async (req, res, next) => {
 });
 
 const getAllLoans = asyncHandler(async (req, res, next) => {
-  const loans = await Loan.findAll();
+  const loans = await Loan.findAll({ include: User });
   if (!loans) {
     return next(new CustomError("No loans found on the platform yet", 404));
   }
@@ -55,7 +56,7 @@ const rejectLoan = asyncHandler(async (req, res, next) => {
 
 const getSingleLoanById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const loan = await Loan.findByPk(id);
+  const loan = await Loan.findByPk(id, { include: User });
   if (!loan) {
     return next(new CustomError("No loan found with this id", 404));
   }

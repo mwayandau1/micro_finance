@@ -13,6 +13,7 @@ const Profile = sequelize.define(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      unique: true,
       references: {
         model: "User",
         key: "id",
