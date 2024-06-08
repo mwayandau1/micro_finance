@@ -53,23 +53,7 @@ const User = sequelize.define(
         },
       },
     },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM("user", "admin"),
-      defaultValue: "user",
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: "Role cannot be null",
-        },
-        notEmpty: {
-          msg: "Role cannot be empty",
-        },
-      },
-    },
+
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -97,6 +81,38 @@ const User = sequelize.define(
           );
         }
       },
+    },
+    role: {
+      type: DataTypes.ENUM("user", "admin"),
+      defaultValue: "user",
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Role cannot be null",
+        },
+        notEmpty: {
+          msg: "Role cannot be empty",
+        },
+      },
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    verifiedAt: {
+      type: DataTypes.DATE,
+    },
+    verificationToken: {
+      type: DataTypes.STRING,
+    },
+
+    passwordResetToken: {
+      type: DataTypes.STRING,
+    },
+    passwordResetTokenExpiry: DataTypes.DATE,
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     createdAt: {
       allowNull: false,

@@ -1,20 +1,25 @@
+const crypto = require("crypto");
 const User = require("../models/UserModel");
 const asyncHandler = require("../utils/asyncHandler");
 const CustomError = require("../utils/customError");
 const { generateJWT } = require("../utils/jwt");
 const bcrypt = require("bcrypt");
+const { sendEmailVerification } = require("../utils/email");
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, phone, password } = req.body;
   if (!firstName || !lastName || !password || !email || !phone) {
     return next(new CustomError("Please provide all values", 400));
   }
+
+  const verificationToken = crypto.randomBytes(40).toString("hex");
   const user = await User.create({
     firstName,
     lastName,
     email,
     phone,
     password,
+    verificationToken,
   });
   if (!user) {
     return next(new CustomError("Error creating user"));
@@ -24,8 +29,26 @@ const registerUser = asyncHandler(async (req, res, next) => {
     email: user.email,
     role: user.role,
   };
+  sendEmailVerification(user.email, verificationToken);
   const token = generateJWT({ payload: tokenUser });
   return res.status(201).json({ tokenUser, token });
+});
+
+const verifyEmail = asyncHandler(async (req, res, next) => {
+  const { token, email } = req.params;
+  const user = await User.findOne({
+    where: {
+      email: email,
+      verificationToken: token,
+    },
+  });
+  if (!user) {
+    return next(new CustomError("Invalid token provided"));
+  }
+  user.verificationToken = null;
+  user.isVerified = true;
+  user.verifiedAt = Date.now();
+  await user.save();
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
@@ -51,4 +74,4 @@ const loginUser = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ tokenUser, token });
 });
 
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, verifyEmail };
